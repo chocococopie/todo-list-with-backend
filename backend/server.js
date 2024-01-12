@@ -32,5 +32,26 @@ app.delete('/todos/:id', async (req, res) => {
   res.json({ status: 'Deleted' });
 });
 
+// Update a todo's completed status
+app.patch('/todos/:id', async (req, res) => {
+  const { completed } = req.body;
+
+  try {
+    const updatedTodo = await Todo.findByIdAndUpdate(
+      req.params.id,
+      { completed },
+      { new: true }
+    );
+    if (!updatedTodo) {
+      return res.status(404).json({ error: 'Todo not found' });
+    }
+    res.json(updatedTodo);
+  } catch (error) {
+    console.error('Error updating todo:', error);
+    res.status(500).json({ error: 'Could not update todo' });
+  }
+});
+
+
 // Start server
 app.listen(3001, () => console.log('🚀 Backend running on http://localhost:3001'));
